@@ -1,11 +1,16 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { Link } from 'expo-router';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/hooks/use-auth';
+import { useThemeColor } from '@/hooks/use-theme-color';
+import { Link } from 'expo-router';
+import { useState } from 'react';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passView, setPassView] = useState<boolean>(false);
   const { login, loading, error, clearError } = useAuth();
 
   const handleLogin = async () => {
@@ -18,12 +23,13 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      
+    <ThemedView style={styles.container}>
+      <ThemedText style={styles.title}>Login</ThemedText>
+
+      <ThemedText>Email</ThemedText>
       <TextInput
-        style={styles.input}
-        placeholder="Email"
+        style={[styles.input, { color: useThemeColor({}, 'text') }]}
+        placeholder="example@email.com"
         value={email}
         onChangeText={(text) => {
           setEmail(text);
@@ -32,17 +38,26 @@ export default function LoginScreen() {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      
-      <Pressable 
-        style={styles.button} 
+
+      <ThemedText>Senha</ThemedText>
+      <View style={styles.passwordField}>
+        <TextInput
+          style={[styles.passwordInput, { color: useThemeColor({}, 'text') }]}
+          placeholder="••••••••••••"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!passView}
+        />
+        <Pressable
+          style={{ padding: 8 }}
+          onPress={() => setPassView(prev => !prev)}
+        >
+          <IconSymbol name={passView ? 'eye.fill' : 'eye.slash.fill'} size={20} color="#fff" style={{ marginRight: 8 }} />
+        </Pressable>
+      </View>
+
+      <Pressable
+        style={styles.button}
         onPress={handleLogin}
         disabled={loading}
       >
@@ -50,11 +65,11 @@ export default function LoginScreen() {
           {loading ? 'Entrando...' : 'Entrar'}
         </Text>
       </Pressable>
-      
+
       <Link href="/(auth)/register" style={styles.link}>
         <Text>Não tem conta? Cadastre-se</Text>
       </Link>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -76,6 +91,19 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 8,
+  },
+  passwordField: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15
+  },
+  passwordInput: {
+    padding: 15,
+    width: '84%'
   },
   button: {
     backgroundColor: '#007AFF',
