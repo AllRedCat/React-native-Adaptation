@@ -4,12 +4,11 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
-    const { loading, user, checkAuth } = useAuth();
+    const { loading, user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!loading) {
-            checkAuth();
             if (user) {
                 router.replace('/(protected)/home');
             } else {

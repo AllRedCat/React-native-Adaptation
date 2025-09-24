@@ -5,6 +5,7 @@ import { config, getApiUrl, isDebugMode, isDevelopment } from '../../constants/c
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Link } from "expo-router";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function ProfileScreen() {
     const [envInfo, setEnvInfo] = useState<string>('');
@@ -24,7 +25,9 @@ URL da API completa: ${getApiUrl('/users')}
     }, []);
 
     return (
-        <SafeAreaProvider>
+        <SafeAreaProvider
+            style={{ backgroundColor: useThemeColor({ light: '#fff', dark: '#000' }, 'background') }}
+        >
             <SafeAreaView style={styles.container}>
                 <ThemedView style={styles.content}>
                     <ThemedText style={styles.title}>Profile</ThemedText>

@@ -3,15 +3,21 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAuth } from '@/hooks/use-auth';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Link } from 'expo-router';
-import { useState } from 'react';
+import { Link, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passView, setPassView] = useState<boolean>(false);
-  const { login, loading, error, clearError } = useAuth();
+  const { user, login, loading, error, clearError } = useAuth();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if(!loading) router.replace('/(protected)/home')
+  }, [user]);
 
   const handleLogin = async () => {
     if (!email || !password) {
