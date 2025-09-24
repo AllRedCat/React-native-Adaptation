@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import MapView, {
-    PROVIDER_GOOGLE,
     PROVIDER_DEFAULT,
     Region
 } from 'react-native-maps';
@@ -28,7 +27,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({
                 initialRegion={initialRegion}
                 showsUserLocation={true}
                 showsMyLocationButton={true}
-                mapType={'mutedStandard'}
+                mapType={Platform.OS === 'ios' ? 'mutedStandard' : 'standard'}
                 showsScale={false}
                 loadingEnabled={true}
                 showsCompass={false}
