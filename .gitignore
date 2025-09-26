@@ -46,3 +46,6 @@ app-example
 # IDE folders
 .vscode
 .idea
+
+# Personal files
+keep/
