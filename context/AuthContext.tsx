@@ -87,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         dispatch({ type: 'SET_USER', payload: data.user });
+        router.replace('/(protected)/home');
       } else {
         // Não autenticado ou sessão expirada
         dispatch({ type: 'SET_USER', payload: null });
@@ -167,14 +168,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       
       // Fazer logout no servidor (vai limpar o cookie)
-      await fetch('https://api.vagaslivre.com/app/users/logout', {
+      const res = await fetch('https://api.vagaslivre.com/app/users/logout', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       // Limpar estado local
       dispatch({ type: 'LOGOUT' });
       

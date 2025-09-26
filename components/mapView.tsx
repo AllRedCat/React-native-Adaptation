@@ -1,6 +1,9 @@
-import React, { useRef } from "react";
+import { getParkinLots } from "@/lib/parkingLots";
+import { ParkingLot } from "@/types/parkingLot";
+import React, { useRef, useState, useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import MapView, {
+    Marker,
     PROVIDER_DEFAULT,
     Region
 } from 'react-native-maps';
@@ -19,6 +22,17 @@ export const MapComponent: React.FC<MapComponentProps> = ({
 }) => {
     const mapRef = useRef<MapView>(null);
 
+    // Public parking lots information
+    const [parkingLots, setParkingLots] = useState<Array<ParkingLot>>([]);
+
+    useEffect(() => {
+        async function fetchParkingLots() {
+            const data = await getParkinLots();
+            setParkingLots(data || []);
+        }
+        fetchParkingLots();
+    }, [parkingLots]);
+
     return (
         <View style={styles.container}>
             <MapView
@@ -30,13 +44,24 @@ export const MapComponent: React.FC<MapComponentProps> = ({
                 mapType={Platform.OS === 'ios' ? 'mutedStandard' : 'standard'}
                 showsScale={false}
                 loadingEnabled={true}
-                showsCompass={false}
                 showsTraffic={false}
                 showsIndoorLevelPicker={false}
                 showsPointsOfInterest={false}
                 style={styles.map}
             >
-
+                {/* <Marker
+                    coordinate={{ latitude: -18.9113, longitude: -48.2611 }}
+                    pinColor="#009999"
+                /> */}
+                {parkingLots.map((lot) => (
+                    <Marker
+                        key={lot.id}
+                        coordinate={{ latitude: lot.latitude, longitude: lot.longitude }}
+                        title={lot.name}
+                        description={lot.address}
+                        pinColor="#009900"
+                    />
+                ))}
             </MapView>
         </View>
     );

@@ -1,28 +1,23 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { config, getApiUrl, isDebugMode, isDevelopment } from '../../constants/config';
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Link } from "expo-router";
+import { useAuth } from "@/hooks/use-auth";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { router } from "expo-router";
+import { useEffect } from "react";
+import { Pressable, StyleSheet } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
-    const [envInfo, setEnvInfo] = useState<string>('');
+    const { logout, user } = useAuth();
 
     useEffect(() => {
-        // Exemplo de como usar as variáveis de ambiente
-        const info = `
-Ambiente: ${config.appEnv}
-Debug Mode: ${isDebugMode() ? 'Ativado' : 'Desativado'}
-API Base URL: ${config.apiBaseUrl}
-Desenvolvimento: ${isDevelopment() ? 'Sim' : 'Não'}
-URL da API completa: ${getApiUrl('/users')}
-        `.trim();
 
-        setEnvInfo(info);
-        console.log('Configurações:', config);
     }, []);
+
+    const handleLogout = async () => {
+        await logout();
+        router.replace('/(auth)/login');
+    }
 
     return (
         <SafeAreaProvider
@@ -31,32 +26,22 @@ URL da API completa: ${getApiUrl('/users')}
             <SafeAreaView style={styles.container}>
                 <ThemedView style={styles.content}>
                     <ThemedText style={styles.title}>Profile</ThemedText>
-                    <ThemedText style={styles.subtitle}>Variáveis de Ambiente:</ThemedText>
-                    <ThemedText style={styles.envText}>{envInfo}</ThemedText>
                 </ThemedView>
-                <ThemedView style={styles.content}>
-                    <Link href="/modal">
-                        <Link.Trigger>
-                            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-                        </Link.Trigger>
-                        <Link.Preview />
-                        <Link.Menu>
-                            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-                            <Link.MenuAction
-                                title="Share"
-                                icon="square.and.arrow.up"
-                                onPress={() => alert('Share pressed')}
-                            />
-                            <Link.Menu title="More" icon="ellipsis">
-                                <Link.MenuAction
-                                    title="Delete"
-                                    icon="trash"
-                                    destructive
-                                    onPress={() => alert('Delete pressed')}
-                                />
-                            </Link.Menu>
-                        </Link.Menu>
-                    </Link>
+                <ThemedView
+                    style={{
+                        margin: 10,
+                        borderRadius: 30
+                    }}
+                >
+                    <Pressable
+                    style={styles.btn_logout}
+                    onPress={handleLogout}
+                    // disabled={loading}
+                    >
+                        <ThemedText type="subtitle">
+                            Log-Out
+                        </ThemedText>
+                    </Pressable>
                 </ThemedView>
             </SafeAreaView>
         </SafeAreaProvider>
@@ -88,5 +73,12 @@ const styles = StyleSheet.create({
         fontFamily: 'monospace',
         padding: 10,
         borderRadius: 5,
+    },
+    btn_logout: {
+        backgroundColor: '#af0000',
+        height: 60,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
 });

@@ -11,12 +11,13 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passView, setPassView] = useState<boolean>(false);
-  const { user, login, loading, error, clearError } = useAuth();
+  const { user, login, loading, error, clearError, checkAuth } = useAuth();
 
   const router = useRouter();
 
   useEffect(() => {
-    if(!loading) router.replace('/(protected)/home')
+    // if(!loading) router.replace('/(protected)/home')
+    checkAuth();
   }, [user]);
 
   const handleLogin = async () => {
